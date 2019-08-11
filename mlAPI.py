@@ -1,0 +1,70 @@
+import flask
+import numpy as np
+import keras
+from keras.models import load_model
+from keras.applications.resnet50 import preprocess_input
+from keras.preprocessing.image import img_to_array
+from keras.applications import imagenet_utils
+import io
+from PIL import Image
+
+
+app = flask.Flask(__name__)
+model = None
+
+
+def load_model_api():
+    global model
+    model = load_model('ft_model.h5')
+    model._make_predict_function()
+
+
+def prepare_image(image, target):
+    if image.mode != "RGB":
+        image = image.convert("RGB")
+
+    # image = preprocess_input(image)
+    image = image.resize(target)
+    image = img_to_array(image)
+    image = np.expand_dims(image, axis=0)
+    image = imagenet_utils.preprocess_input(image)
+
+    # return the image preprocessed using the ResNet50 pre-processing function
+    return image
+
+
+@app.route("/predict", methods=["POST"])
+def predict():
+    data = {"success": False}
+
+    # First checking that image was properly uploaded
+    if flask.request.method == "POST":
+        if flask.request.files.get("image"):
+            # read image using the PIL format
+            image = flask.request.files["image"].read()
+            image = Image.open(io.BytesIO(image))
+
+            # pre-process the image
+            image = prepare_image(image, target=(224, 224))
+
+            # classify it, give prediction to return to client
+            prediction = model.predict(image)
+            if prediction > 0.5:
+                output_pred = "not_food"
+            else:
+                output_pred = "food"
+
+            # Add to data dictionary to return to client
+            data["predictions"] = output_pred
+
+            # Return the request was successful
+            data["success"] = True
+
+    return flask.jsonify(data)
+
+
+if __name__ == "__main__":
+    print("*Loading model and Flask starting server, please wait:")
+    load_model_api()
+    app.run()
+
