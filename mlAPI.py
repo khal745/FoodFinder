@@ -11,7 +11,7 @@ from PIL import Image
 from flask_dropzone import Dropzone
 import os
 
-basedir = os.path.asbpath(os.path.dirname(__file__))
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = flask.Flask(__name__)
 model = None
@@ -21,9 +21,12 @@ app.config.update(
     DROPZONE_ALLOWED_FILE_TYPE='image',
     DROPZONE_MAX_FILE_SIZE=3,
     DROPZONE_MAX_FILES=1,
+    DROPZONE_REDIRECT_VIEW='completed'
 )
 
 dropzone = Dropzone(app)
+
+output_pred = "?"
 
 def load_model_api():
     global model
@@ -45,14 +48,46 @@ def prepare_image(image, target):
     return image
 
 
-@app.route("/predict", methods=["POST"])
-def predict():
-    data = {"success": False}
+@app.route('/')
+def index():
+    return flask.render_template('page.html')
 
+
+@app.route("/predict", methods=["POST", "GET"])
+def upload():
+    data = {"success": False}
+    if flask.request.method == 'POST':
+        image = flask.request.files.get('file') 
+        image.save(os.path.join(app.config['UPLOADED_PATH'], image.filename))
+        filename = image.filename
+    
+    image = Image.open(image)
+
+    # pre-process the image
+    image = prepare_image(image, target=(224, 224))
+
+    # classify it, give prediction to return to client
+    prediction = model.predict(image)
+    global output_pred
+    if prediction > 0.5:
+        output_pred = "not_food"
+    else:
+        output_pred = "food"
+
+    # Add to data dictionary to return to client
+    data["predictions"] = output_pred
+
+    # Return the request was successful
+    data["success"] = True
+
+    return '<h1>Redirected Page</h1><p>Prediction: Its food! </p>' 
+
+"""
     # First checking that image was properly uploaded
     if flask.request.method == "POST":
         if flask.request.files.get("image"):
             # read image using the PIL format
+            
             image = flask.request.files["image"].read()
             image = Image.open(io.BytesIO(image))
 
@@ -73,7 +108,16 @@ def predict():
             data["success"] = True
 
     return flask.jsonify(data)
+"""
 
+@app.route('/completed')
+def completed():
+    if (output_pred == 'food'):
+        return '<h1>Redirected Page</h1><p>Prediction: Its food! </p>' 
+    if (output_pred == 'not_food'):
+        return '<h1>Redirected Page</h1><p>Prediction: No food here!</p>' 
+
+    return '<h1>Redirected Page</h1><p>Oops</p>' 
 
 if __name__ == "__main__":
     print("*Loading model and Flask starting server, please wait:")
