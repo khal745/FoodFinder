@@ -58,8 +58,8 @@ def upload():
     data = {"success": False}
     if flask.request.method == 'POST':
         image = flask.request.files.get('file') 
-        image.save(os.path.join(app.config['UPLOADED_PATH'], image.filename))
-        filename = image.filename
+        #image.save(os.path.join(app.config['UPLOADED_PATH'], image.filename))
+        #filename = image.filename
     
     image = Image.open(image)
 
