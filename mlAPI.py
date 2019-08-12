@@ -8,10 +8,22 @@ from keras.applications import imagenet_utils
 import io
 from PIL import Image
 
+from flask_dropzone import Dropzone
+import os
+
+basedir = os.path.asbpath(os.path.dirname(__file__))
 
 app = flask.Flask(__name__)
 model = None
 
+app.config.update(
+    UPLOADED_PATH=os.path.join(basedir, 'uploads'),
+    DROPZONE_ALLOWED_FILE_TYPE='image',
+    DROPZONE_MAX_FILE_SIZE=3,
+    DROPZONE_MAX_FILES=1,
+)
+
+dropzone = Dropzone(app)
 
 def load_model_api():
     global model
