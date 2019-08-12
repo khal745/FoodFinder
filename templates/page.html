@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Food Finder</title>
+{{ dropzone.load_css() }}
+{{ dropzone.style('border: 3px dashed #087f7; min-height: 400px;') }}
+</head>
+<body>
+    {{ dropzone.create(action='upload') }}
+    {{ dropzone.load_js() }}
+    {{ dropzone.config() }}
+</body>
+
+</html>
