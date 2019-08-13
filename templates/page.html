@@ -2,16 +2,33 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="../static/css/style1.css">
+<link href="https://fonts.googleapis.com/css?family=Lato|Raleway|Roboto&display=swap" rel="stylesheet">
+
 <title>Food Finder</title>
 {{ dropzone.load_css() }}
-{{ dropzone.style('border: 3px dashed #087f7; min-height: 200px;') }}
+{{ dropzone.style('border: 5px dashed black; background-color: #757575;width: 30%;height: 100px;margin: auto;color: #757575;') }}
 </head>
 <body>
-    <h1>Welcome to FoodFinder!</h1>
-    <p>Upload an image to continue: </p>
+    <div class="header">
+        <h1>FoodFinder</h1>
+        <p>Transfer learning powered!</p>
+    </div>
+
+    <div class="para">
+    <p>Ever had trouble finding out if there's food in an image?</p>
+    <p>Well worry no more! Using a transfer learning model, you can find out if there's food in your picture!</p>
+    <p>Click on the box below, or drag your picture in to find out:</p>
+    </div>
     {{ dropzone.create(action='upload') }}
     {{ dropzone.load_js() }}
     {{ dropzone.config() }}
+
+    <div class="para">
+    <p>Powered by this:</p> 
+    </div>
 </body>
 
 </html>
+
+

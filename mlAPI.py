@@ -82,34 +82,6 @@ def upload():
 
     return '' 
 
-"""
-    # First checking that image was properly uploaded
-    if flask.request.method == "POST":
-        if flask.request.files.get("image"):
-            # read image using the PIL format
-            
-            image = flask.request.files["image"].read()
-            image = Image.open(io.BytesIO(image))
-
-            # pre-process the image
-            image = prepare_image(image, target=(224, 224))
-
-            # classify it, give prediction to return to client
-            prediction = model.predict(image)
-            if prediction > 0.5:
-                output_pred = "not_food"
-            else:
-                output_pred = "food"
-
-            # Add to data dictionary to return to client
-            data["predictions"] = output_pred
-
-            # Return the request was successful
-            data["success"] = True
-
-    return flask.jsonify(data)
-"""
-
 @app.route('/completed')
 def completed():
     if (output_pred == 'food'):
