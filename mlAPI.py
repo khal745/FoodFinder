@@ -80,7 +80,7 @@ def upload():
     # Return the request was successful
     data["success"] = True
 
-    return '<h1>Redirected Page</h1><p>Prediction: Its food! </p>' 
+    return '' 
 
 """
     # First checking that image was properly uploaded
@@ -113,9 +113,9 @@ def upload():
 @app.route('/completed')
 def completed():
     if (output_pred == 'food'):
-        return '<h1>Redirected Page</h1><p>Prediction: Its food! </p>' 
+        return '<h1>Prediction Complete</h1><p>Prediction: Its food! </p>' 
     if (output_pred == 'not_food'):
-        return '<h1>Redirected Page</h1><p>Prediction: No food here!</p>' 
+        return '<h1>Prediction Complete</h1><p>Prediction: No food here!</p>' 
 
     return '<h1>Redirected Page</h1><p>Oops</p>' 
 

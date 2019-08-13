@@ -7,6 +7,8 @@
 {{ dropzone.style('border: 3px dashed #087f7; min-height: 200px;') }}
 </head>
 <body>
+    <h1>Welcome to FoodFinder!</h1>
+    <p>Upload an image to continue: </p>
     {{ dropzone.create(action='upload') }}
     {{ dropzone.load_js() }}
     {{ dropzone.config() }}
