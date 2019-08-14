@@ -85,9 +85,9 @@ def upload():
 @app.route('/completed')
 def completed():
     if (output_pred == 'food'):
-        return '<h1>Prediction Complete</h1><p>Prediction: Its food! </p>' 
+        return flask.render_template('food.html')
     if (output_pred == 'not_food'):
-        return '<h1>Prediction Complete</h1><p>Prediction: No food here!</p>' 
+        return flask.render_template('notfood.html')
 
     return '<h1>Redirected Page</h1><p>Oops</p>' 
 
