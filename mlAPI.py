@@ -9,15 +9,12 @@ import io
 from PIL import Image
 
 from flask_dropzone import Dropzone
-import os
 
-basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = flask.Flask(__name__)
 model = None
 
 app.config.update(
-    UPLOADED_PATH=os.path.join(basedir, 'uploads'),
     DROPZONE_ALLOWED_FILE_TYPE='image',
     DROPZONE_MAX_FILE_SIZE=3,
     DROPZONE_MAX_FILES=1,
@@ -38,12 +35,12 @@ def prepare_image(image, target):
     if image.mode != "RGB":
         image = image.convert("RGB")
 
-    # image = preprocess_input(image)
+    #Need to take the image and convert to suitable form and preprocess.
     image = image.resize(target)
     image = img_to_array(image)
     image = np.expand_dims(image, axis=0)
-    image = imagenet_utils.preprocess_input(image)
 
+    image = imagenet_utils.preprocess_input(image)
     # return the image preprocessed using the ResNet50 pre-processing function
     return image
 
@@ -55,30 +52,22 @@ def index():
 
 @app.route("/predict", methods=["POST", "GET"])
 def upload():
-    data = {"success": False}
+    
     if flask.request.method == 'POST':
         image = flask.request.files.get('file') 
-        #image.save(os.path.join(app.config['UPLOADED_PATH'], image.filename))
-        #filename = image.filename
-    
+        
     image = Image.open(image)
 
     # pre-process the image
     image = prepare_image(image, target=(224, 224))
 
-    # classify it, give prediction to return to client
+    # classify it using ft_model - leads to redirection to relevant page for different styled page
     prediction = model.predict(image)
     global output_pred
     if prediction > 0.5:
         output_pred = "not_food"
     else:
         output_pred = "food"
-
-    # Add to data dictionary to return to client
-    data["predictions"] = output_pred
-
-    # Return the request was successful
-    data["success"] = True
 
     return '' 
 
